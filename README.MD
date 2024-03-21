@@ -18,7 +18,8 @@ docker-compose up
 4. После чего swagger докумнтация будет доступна по ссылке:  
 ```bash      
 http://localhost:8000/swagger/
-```
+```  
+![image](https://github.com/MaksimovDenis/vk_restAPI/assets/44647373/5678f769-3d72-4ddb-bf6d-e0570baa14a1)  
 
 # Реализация 
 - Был реализован REST API сервер для магазина электро-товаров, в рамках тестового задания.
