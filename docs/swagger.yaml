@@ -1,0 +1,58 @@
+basePath: /
+definitions:
+  handler.Err:
+    properties:
+      message:
+        type: string
+    type: object
+  handler.TempOrderDetails:
+    properties:
+      id:
+        type: integer
+      Доп. стеллаж:
+        items:
+          type: string
+        type: array
+      Количество:
+        type: integer
+      Товар:
+        type: string
+      заказ:
+        type: integer
+    type: object
+host: localhost:8000
+info:
+  contact:
+    email: maksimovis74@gmail.com
+    name: Denis Maksimov
+  description: API Server for Market
+  title: TestTask_Retail_MaksimovDenis
+paths:
+  /api/orderdetails:
+    get:
+      consumes:
+      - application/json
+      description: Get List of All Order Details
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.TempOrderDetails'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Err'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Err'
+      summary: Get Order Details
+      tags:
+      - Orders
+swagger: "2.0"

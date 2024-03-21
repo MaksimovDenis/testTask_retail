@@ -1,0 +1,89 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API Server for Market",
+        "title": "TestTask_Retail_MaksimovDenis",
+        "contact": {
+            "name": "Denis Maksimov",
+            "email": "maksimovis74@gmail.com"
+        }
+    },
+    "host": "localhost:8000",
+    "basePath": "/",
+    "paths": {
+        "/api/orderdetails": {
+            "get": {
+                "description": "Get List of All Order Details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get Order Details",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.TempOrderDetails"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Err"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Err"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Err"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "handler.Err": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.TempOrderDetails": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "Доп. стеллаж": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "Количество": {
+                    "type": "integer"
+                },
+                "Товар": {
+                    "type": "string"
+                },
+                "заказ": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}
