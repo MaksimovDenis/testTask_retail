@@ -18,22 +18,33 @@ func NewRetailPostgres(db *sqlx.DB) *RetailPostgres {
 
 func (r *RetailPostgres) GetOrderDetails() ([]retail.OrderDetails, error) {
 	query := `
-		SELECT oi.order_id, oi.product_id, p.name AS product_name, ps.shelf_id, oi.count AS order_count, 
-			s.location AS shelf_location, array_agg(s2.location) AS additional_shelves
-		FROM OrderItems oi
-		INNER JOIN Products p ON oi.product_id = p.id
-		INNER JOIN ProductShelves ps ON oi.product_id = ps.product_id
-		INNER JOIN Shelves s ON ps.shelf_id = s.id
-		LEFT JOIN ProductShelves ps2 ON oi.product_id = ps2.product_id AND ps2.is_main = FALSE
-		LEFT JOIN Shelves s2 ON ps2.shelf_id = s2.id
-		WHERE ps.is_main = TRUE
-		GROUP BY oi.order_id, oi.product_id, p.name, ps.shelf_id, oi.count, s.location
-		ORDER BY 
-			CASE 
-				WHEN s.location = 'Стеллаж А' THEN oi.order_id 
-				ELSE oi.product_id 
-			END
-	`
+	SELECT oi.order_id, oi.product_id, p.name AS product_name, 
+	       (SELECT ps.shelf_id 
+	        FROM ProductShelves ps 
+	        WHERE ps.product_id = oi.product_id AND ps.is_main = TRUE) AS shelf_id, 
+	       oi.count AS order_count, 
+	       (SELECT s.location 
+	        FROM Shelves s 
+	        WHERE s.id = (SELECT ps.shelf_id 
+	                      FROM ProductShelves ps 
+	                      WHERE ps.product_id = oi.product_id AND ps.is_main = TRUE)) AS shelf_location, 
+	       (SELECT array_agg(s2.location) 
+	        FROM Shelves s2 
+	        LEFT JOIN ProductShelves ps2 ON s2.id = ps2.shelf_id 
+	        WHERE ps2.product_id = oi.product_id AND ps2.is_main = FALSE) AS additional_shelves
+	FROM OrderItems oi, Products p
+	WHERE oi.product_id = p.id
+	GROUP BY oi.order_id, oi.product_id, p.name, oi.count
+	ORDER BY 
+		CASE 
+			WHEN (SELECT s.location 
+			      FROM Shelves s 
+			      WHERE s.id = (SELECT ps.shelf_id 
+			                    FROM ProductShelves ps 
+			                    WHERE ps.product_id = oi.product_id AND ps.is_main = TRUE)) = 'Стеллаж А' THEN oi.order_id 
+			ELSE oi.product_id 
+		END
+`
 
 	rows, err := r.db.Query(query)
 	if err != nil {
